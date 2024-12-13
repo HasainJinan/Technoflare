@@ -60,3 +60,11 @@ def product_page(product_id):
     conn.close()
 
     return render_template("product.html.jinja", product = result)
+
+@app.route("/signin")
+def signin_page():
+    return render_template("signin.html.jinja")
+
+@app.route("/login")
+def login_page():
+    return render_template("login.html.jinja")
