@@ -27,32 +27,38 @@
                 <h6 class="card-subtitle mb-4 text-muted text-center">Your privacy is our priority.</h6>
             </div>
             <hr>
-            <form action="https://us-central1-steam-center-app-dev.cloudfunctions.net/formToEmail" method="post">
+
+            {%for message in get_flashed_messages()%}
+                <div class="alert alert-danger" role="alert">
+                    {{message}}
+                </div>
+            {%endfor%}
+
+            <form action="/signup" method="post">
                 <h5 class="card-title text-left ml-2 textLapis">First Name:</h5>
-                <input type="text" class="form-control" name="fname" placeholder="John" required="" style="visibility: visible;">
+                <input type="text" class="form-control" name="fname" placeholder="John" required value="{{request.form.get('fname', '')}}">
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Last Name:</h5>
-                <input type="text" class="form-control" name="lname" placeholder="Doe" required="" style="visibility: visible;">
+                <input type="text" class="form-control" name="lname" placeholder="Doe" required value="{{request.form.get('lname', '')}}">
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Email:</h5>
-                <input type="email" class="form-control" name="email" id="exampleFormControlInput1" placeholder="you@technoflare.com" required="" style="visibility: visible;">
+                <input type="email" class="form-control" name="email" id="exampleFormControlInput1" placeholder="you@technoflare.com" required value="{{request.form.get('email', '')}}">
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Home Address:</h5>
-                <input type="text" class="form-control" name="address" placeholder="Address" required="" style="visibility: visible;">
+                <input type="text" class="form-control" name="address" placeholder="Address" required value="{{request.form.get('address', '')}}">
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Create a Username:</h5>
-                <input type="text" class="form-control" name="username" placeholder="CoolGuy" required="" style="visibility: visible;">
+                <input type="text" class="form-control" name="username" placeholder="CoolGuy" required value="{{request.form.get('username', '')}}">
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Create a Password:</h5>
-                <input type="password" class="form-control" name="pass" placeholder="Password" required="" style="visibility: visible;">
+                <input type="password" class="form-control" name="pass" placeholder="Password" required>
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Confirm Password:</h5>
-                <input type="password" class="form-control" name="confpass" placeholder="Password" required="" style="visibility: visible;">
+                <input type="password" class="form-control" name="confpass" placeholder="Password" required>
                     <br>
                 <div class="d-grid gap-2 col-10 mx-auto">
                     <input class="btn btn-success btn-lg" type="submit" value="Sign Up" name="verify">
                 </div>
-                <input name="send-to" value="jforlenza@brooklynsteamcenter.org" hidden="">
             </form>
         </div>
     </div>

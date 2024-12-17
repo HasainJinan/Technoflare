@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, flash
 import pymysql
 from dynaconf import Dynaconf
 
@@ -7,6 +7,8 @@ app = Flask(__name__)
 conf = Dynaconf(
     settings_file = ["settings.toml"]
 )
+
+app.secret_key = conf.secret_key
 
 def connect_db():
     conn = pymysql.connect(
@@ -61,9 +63,50 @@ def product_page(product_id):
 
     return render_template("product.html.jinja", product = result)
 
-@app.route("/signin")
-def signin_page():
-    return render_template("signin.html.jinja")
+@app.route("/signup", methods=["POST", "GET"])
+def signup_page():
+    if request.method == "POST":
+        first_name = request.form["fname"]
+        last_name = request.form["lname"]
+
+        email = request.form["email"]
+        address = request.form["address"]
+
+        username = request.form["username"]
+        password = request.form["pass"]
+        confirm_password = request.form["confpass"]
+
+        conn = connect_db()
+
+        cursor = conn.cursor()
+        
+        if len(password.strip()) < 8:
+            flash("Password must be 8 characters or longer.")
+        
+        else:
+            if password != confirm_password:
+                flash("Passwords do not match.")
+
+            else:
+                try:
+                    cursor.execute(f"""
+                        INSERT INTO `Customer`
+                            (`username`, `password`, `first_name`, `last_name`, `email`, `address`)
+                        VALUES
+                            ('{username}', '{password}', '{first_name}', '{last_name}', '{email}', '{address}');
+                    """)
+
+                except pymysql.err.IntegrityError:
+                    flash("Username or email is already in use.")
+                
+                else:
+                    return redirect("/login")
+
+                finally:
+                    cursor.close()
+                    conn.close()
+
+    return render_template("signup.html.jinja")
 
 @app.route("/login")
 def login_page():
