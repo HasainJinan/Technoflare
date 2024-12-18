@@ -36,12 +36,19 @@
                 <h3 class="card-title mt-2 text-center textLapis">Log In</h3>
             </div>
             <hr>
-            <form action="https://us-central1-steam-center-app-dev.cloudfunctions.net/formToEmail" method="post">
+
+            {%for message in get_flashed_messages()%}
+                <div class="alert alert-danger" role="alert">
+                    {{message}}
+                </div>
+            {%endfor%}
+
+            <form action="/login" method="post">
                 <h5 class="card-title text-left ml-2 textLapis">Userame:</h5>
-                <input type="text" class="form-control" name="userver" placeholder="CoolGuy" required>
+                <input type="text" class="form-control" name="userVer" placeholder="Username" required>
                     <br>
                 <h5 class="card-title text-left ml-2 textLapis">Create a Password:</h5>
-                <input type="password" class="form-control" name="passver" placeholder="Password" required>
+                <input type="password" class="form-control" name="passVer" placeholder="Password" required>
                     <br>
                 <div class="d-grid gap-2 col-10 mx-auto">
                     <input class="btn btn-success btn-lg" type="submit" value="Log In" name="check">

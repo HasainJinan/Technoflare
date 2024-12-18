@@ -13,16 +13,28 @@
                     <a class="nav-link textLapis" href="/browse">Products</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link textLapis" href="#">Cart</a>
+                    <a class="nav-link textLapis" href="/logout">Log Out</a>
                 </li>
             </ul>
-            <form class="d-flex" action="/signup">
-                <button class="btn signUpBtn" type="submit">Sign Up</button>
-            </form>
-                <p class="my-auto ms-2 me-2 orText">or</p>
-            <form class="d-flex" action="/login">
-                <button class="btn logInBtn" type="submit">Log In</button>
-            </form>
+            
+            {%if current_user.is_authenticated%}
+                <div class="dropdown">
+                    <a class="btn btn-secondary dropdown-toggle signUpBtn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hello, {{current_user.username}}!
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Account(WIP)</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                    </ul>
+                </div>
+            {%else%}
+                <form class="d-flex" action="/login">
+                    <button class="btn signUpBtn" type="submit">Log In</button>
+                </form>
+
+            {%endif%}
         </div>
     </div>
 </nav>
