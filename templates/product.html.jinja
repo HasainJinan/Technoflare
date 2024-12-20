@@ -18,22 +18,40 @@
         .textAlice{
             color: #F0F8FF
         }
+
+        .signUpBtn{
+            background-color: #00A896; 
+            color: #FFFFFF;
+        }
+
+        .signUpBtn:hover{
+            background-color: #00a897bc; 
+            color: #FFFFFF;
+        }
         </style>
         
     </head>
 
     <body style="background-color: #F0F8FF;">
     {% include "components/navbar.html.jinja" %}
-        <h1>{{product["name"]}}</h1>
+        <h1 class="mx-auto">{{product["name"]}}</h1>
         <div class="container text-center">
             <div class="row">
                 <div class="col-md-12 col-lg-5 col-12">
-                    <div class="col"><img src="{{product['image']}}" class="img-fluid"></div>               
+                    <div class="col"><img src="{{product['image']}}" class="img-fluid border border-black"></div>               
                 </div>
                 <div class="col-md-10 col-lg-7 col-11">
                     <div class="col text-start">
-                        <div>
-                            <span class="fs-3 me-4">{{product["price"]}}</span><button type="button" class="btn" style="background-color: #028090; color: #FFFFFF;">Add to Cart</button>
+                        <div class="row align-center">
+                            <div class="col-2">
+                                <span class="fs-2 me-4">${{product["price"]}}</span>
+                            </div>
+                            <div class="col-10">
+                                <form action="/product/{{product['id']}}/cart" method="post">
+                                    <input type="number" class="form-control w-25 mb-1" id="qty" placeholder="Quantity" min="1" name="quantity">
+                                    <button type="submit" class="btn" style="background-color: #028090; color: #FFFFFF;">Add to Cart</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="col text-start"><h5>{{product["description"]}}</h5></div>

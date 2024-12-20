@@ -1,5 +1,5 @@
 #Imports
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, abort
 import pymysql
 from dynaconf import Dynaconf
 import flask_login as login
@@ -23,6 +23,7 @@ app.secret_key = conf.secret_key
 ##User Login Manager
 login_manager = login.LoginManager()
 login_manager.init_app(app)
+login_manager.login_view=("/login")
 
 
 ##Classes
@@ -121,12 +122,43 @@ def product_page(product_id):
     cursor.close()
     conn.close()
 
+    if result is None:
+        abort(404)
+
     return render_template("product.html.jinja", product = result)
+        
+
+##Add to Cart Functionality
+@app.route("/product/<product_id>/cart", methods=["POST"])
+@login.login_required
+def add_to_cart(product_id):
+    quantity = request.form["quantity"]
+
+    customer_id = login.current_user.id
+
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        INSERT INTO `Cart`
+            (`customer_id`, `product_id`, `quantity`)
+        VALUES
+            ({customer_id}, {product_id}, {quantity});
+    """)
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/cart")
 
 
-##ign Up Page
+##Sign Up Page
 @app.route("/signup", methods=["POST", "GET"])
 def signup_page():
+    if login.current_user.is_authenticated:
+        return redirect("/")
+    
     if request.method == "POST":
         first_name = request.form["fname"]
         last_name = request.form["lname"]
@@ -141,33 +173,37 @@ def signup_page():
         conn = connect_db()
 
         cursor = conn.cursor()
-        
-        if len(password.strip()) < 8:
-            flash("Password must be 8 characters or longer.")
-        
+
+        if len(username.strip()) > 20:
+            flash("Username must be 20 characters or less.")
+
         else:
-            if password != confirm_password:
-                flash("Passwords do not match.")
-
+            if len(password.strip()) < 8:
+                flash("Password must be 8 characters or longer.")
+            
             else:
-                try:
-                    cursor.execute(f"""
-                        INSERT INTO `Customer`
-                            (`username`, `password`, `first_name`, `last_name`, `email`, `address`)
-                        VALUES
-                            ('{username}', '{password}', '{first_name}', '{last_name}', '{email}', '{address}');
-                    """)
+                if password != confirm_password:
+                    flash("Passwords do not match.")
 
-                except pymysql.err.IntegrityError:
-                    flash("Username or email is already in use.")
-                
                 else:
-                    return redirect("/login")
+                    try:
+                        cursor.execute(f"""
+                            INSERT INTO `Customer`
+                                (`username`, `password`, `first_name`, `last_name`, `email`, `address`)
+                            VALUES
+                                ('{username}', '{password}', '{first_name}', '{last_name}', '{email}', '{address}');
+                        """)
 
-                finally:
-                    ##Close Connections
-                    cursor.close()
-                    conn.close()
+                    except pymysql.err.IntegrityError:
+                        flash("Username or email is already in use.")
+                    
+                    else:
+                        return redirect("/login")
+
+                    finally:
+                        ##Close Connections
+                        cursor.close()
+                        conn.close()
 
     return render_template("signup.html.jinja")
 
@@ -175,6 +211,8 @@ def signup_page():
 ##Log In Page
 @app.route("/login", methods=["POST", "GET"])
 def login_page():
+    if login.current_user.is_authenticated:
+        return redirect("/")
     if request.method == "POST":
         username = request.form["userVer"].strip()
         password = request.form["passVer"]
@@ -209,3 +247,9 @@ def login_page():
 def logout():
     login.logout_user()
     return redirect("/")
+
+##Cart Page
+@app.route("/cart", methods=["GET"])
+@login.login_required
+def cart_page():
+    return render_template("cart.html.jinja")

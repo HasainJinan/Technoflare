@@ -16,10 +16,28 @@
           <a class="nav-link textLapis" href="/logout">Log Out</a>
         </li>
       </ul>
-      <form class="d-flex" role="search">
+      <form class="d-flex mx-3" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
+      {%if current_user.is_authenticated%}
+        <div class="dropdown">
+          <a class="btn btn-secondary dropdown-toggle signUpBtn border-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Hello, {{current_user.username}}!
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Account(WIP)</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+          </ul>
+          </div>
+
+      {%else%}
+          <form class="d-flex" action="/login">
+              <button class="btn signUpBtn" type="submit">Log In</button>
+          </form>
+
+      {%endif%}
     </div>
   </div>
 </nav>
