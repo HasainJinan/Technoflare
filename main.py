@@ -20,6 +20,10 @@ conf = Dynaconf(
 app.secret_key = conf.secret_key
 
 
+##Special Account
+admin = conf.sp_username
+
+
 ##User Login Manager
 login_manager = login.LoginManager()
 login_manager.init_app(app)
@@ -80,7 +84,7 @@ def connect_db():
 ##Homepage
 @app.route("/")
 def index():
-    return render_template("homepage.html.jinja")
+    return render_template("homepage.html.jinja", admin = admin)
 
 
 ##Product Browsing Page
@@ -225,6 +229,10 @@ def login_page():
         
         result = cursor.fetchone()
 
+        #Close Connections
+        cursor.close()
+        conn.close()
+
         if result is None:
             flash("Your username and/or password is incorrect.")
         
@@ -248,8 +256,33 @@ def logout():
     login.logout_user()
     return redirect("/")
 
+
 ##Cart Page
 @app.route("/cart", methods=["GET"])
 @login.login_required
 def cart_page():
-    return render_template("cart.html.jinja")
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+
+    cursor.execute(f"""
+        SELECT
+            `name`,
+            `price`,
+            `quantity`,
+            `image`,
+            `product_id`,
+            `Cart`.`id`
+        FROM `Cart` 
+        JOIN `Product` on `product_id` = `Product`.`id` 
+        WHERE `customer_id` = {customer_id};
+    """)
+
+    results = cursor.fetchall()
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+    return render_template("cart.html.jinja", cartContents = results)

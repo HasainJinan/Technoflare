@@ -12,6 +12,11 @@
                 <li class="nav-item">
                     <a class="nav-link textLapis" href="/browse">Products</a>
                 </li>
+                {%if current_user.is_authenticated%}
+                    <li class="nav-item">
+                        <a class="nav-link textLapis" href="/cart">Cart</a>
+                    </li>
+                {%endif%}
                 <li class="nav-item">
                     <a class="nav-link textLapis" href="/logout">Log Out</a>
                 </li>
