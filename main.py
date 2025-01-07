@@ -148,8 +148,10 @@ def add_to_cart(product_id):
         INSERT INTO `Cart`
             (`customer_id`, `product_id`, `quantity`)
         VALUES
-            ({customer_id}, {product_id}, {quantity});
-    """)
+            ({customer_id}, {product_id}, {quantity})
+        ON DUPLICATE KEY UPDATE
+            `quantity` = `quantity` + {quantity}
+        ;""")
 
     cursor.close()
     conn.close()
@@ -282,7 +284,64 @@ def cart_page():
 
     results = cursor.fetchall()
 
+    total = 0
+
+    if len(results) > 0:
+        for item in results:
+            total += (item["price"] * item["quantity"])
+        total = round(total, 2)
+
     #Close Connections
     cursor.close()
     conn.close()
-    return render_template("cart.html.jinja", cartContents = results)
+    return render_template("cart.html.jinja", cartContents = results, sum = total)
+
+
+##Remove from Cart
+@app.route("/cart/remove_cart", methods=["POST"])
+@login.login_required
+def remove_cart():
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+
+    cart_id = request.form["id"]
+
+    cursor.execute(f"""
+    DELETE FROM `Cart`
+    WHERE
+        `customer_id` = {customer_id}
+    AND
+        `Cart`.`id` = {cart_id};
+    """)
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return redirect("/cart")
+
+
+##Update Item Quantity in Cart
+@app.route("/cart/<cart_id>/update", methods=["POST"])
+@login.login_required
+def update_cart(cart_id):
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    new_qty = request.form["upd_quantity"]
+
+    cursor.execute(f"""
+    UPDATE `Cart`
+    SET `quantity` = {new_qty}
+    WHERE `id` = {cart_id}
+    ;""")
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return redirect("/cart")

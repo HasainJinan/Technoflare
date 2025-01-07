@@ -1,0 +1,65 @@
+body{
+    background-color: #F0F8FF;
+}
+
+.bodyAlice{
+    background-color: #F0F8FF;
+}
+
+.signUpBtn{
+    background-color: #00A896; 
+    color: #FFFFFF;
+}
+
+.signUpBtn:hover{
+    background-color: #00a897bc; 
+    color: #FFFFFF;
+}
+
+.textLapis{
+    color: #05668D;
+}
+
+.bgTeal{
+    background-color: #00808F;
+}
+
+.banButton{
+    background-color: #00808F;
+}
+
+.textAlice{
+    color: #F0F8FF
+}
+
+.logInBtn{
+    background-color: #02C39A; 
+    color: #FFFFFF;
+}
+
+.logInBtn:hover{
+    background-color: #02c399cb; 
+    color: #FFFFFF;
+}
+
+.remove_btn{
+    background-color: #FF6666;
+    color: #F0F8FF;
+    border-radius: 12px;
+}
+
+.edit_btn{
+    background-color: #00808F;
+    color: #F0F8FF;
+    border-radius: 12px;
+}
+
+#logInCardSize{
+    width: 35rem; 
+    height: 24rem;
+}
+
+#logInTextSize{
+    height: 20px; 
+    visibility: visible;
+}
