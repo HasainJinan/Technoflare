@@ -345,3 +345,54 @@ def update_cart(cart_id):
     conn.close()
 
     return redirect("/cart")
+
+
+##Checkout Page
+@app.route("/checkout", methods=["GET"])
+@login.login_required
+def checkout():
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+
+    cursor.execute(f"""
+        SELECT
+            `name`,
+            `price`,
+            `quantity`,
+            `image`,
+            `product_id`,
+            `Cart`.`id`
+        FROM `Cart` 
+        JOIN `Product` on `product_id` = `Product`.`id` 
+        WHERE `customer_id` = {customer_id};
+    """)
+
+    #Cart Item Fetch
+    results = cursor.fetchall()
+
+    if len(results) == 0:
+        return redirect("/browse")
+    
+    else:
+        total = 0
+
+        for item in results:
+            total += (item["price"] * item["quantity"])
+        total = round(total, 2)
+    
+    #User Information Fetch
+    cursor.execute(f"""
+        SELECT * FROM `Customer`
+        WHERE `id` = {customer_id}
+    ;""")
+
+    consumer = cursor.fetchone()
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return render_template("checkout.html.jinja", cartContents = results, sum = total, customer = consumer)
