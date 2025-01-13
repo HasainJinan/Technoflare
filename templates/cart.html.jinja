@@ -10,9 +10,9 @@
 
   <body class="bodyColor">
   {% include "components/navbar.html.jinja" %}
-    <h1>Cart</h1>
+    <h1 class="ms-4 kanit textLapis">Cart</h1>
     {%if cartContents|count == 0%}
-    <p class="fs-2">Your cart is empty.</p>
+    <p class="fs-2 ms-4 kanit textLapis">Your cart is empty.</p>
     {%else%}
     <div class="position-absolute start-0 w-100">
         <table class="table bgTeal object-fit-sm-scale w-100">
@@ -58,7 +58,8 @@
                 {%endfor%}
             </tbody>
         </table>
-        <p class="fs-3 ms-4">Total: ${{sum}}</p>
+        <button class="fs-3 ms-4 btn w-25 px-auto py-auto" disabled>Total: ${{sum}}</button>
+        <a href="/checkout" class="btn position-absolute end-0 me-4 edit_btn btn-lg">Checkout →</a>
     </div>
     {%endif%}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

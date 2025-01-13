@@ -121,6 +121,18 @@ def product_page(product_id):
     cursor.execute(f"SELECT * FROM `Product` WHERE `id` = {product_id};")
 
     result = cursor.fetchone()
+    
+    cursor.execute(f"""
+        SELECT
+            `review`,
+            `rating_stars`,
+            `Review`.`timestamp`,
+            `username`
+        FROM `Review`
+        JOIN `Customer` ON `customer_id` = `Customer`.`id`
+    ;""")
+    
+    reviews = cursor.fetchall()
 
     ##Close Connections
     cursor.close()
@@ -129,7 +141,7 @@ def product_page(product_id):
     if result is None:
         abort(404)
 
-    return render_template("product.html.jinja", product = result)
+    return render_template("product.html.jinja", product = result, reviews = reviews)
         
 
 ##Add to Cart Functionality
@@ -278,7 +290,7 @@ def cart_page():
             `product_id`,
             `Cart`.`id`
         FROM `Cart` 
-        JOIN `Product` on `product_id` = `Product`.`id` 
+        JOIN `Product` ON `product_id` = `Product`.`id` 
         WHERE `customer_id` = {customer_id};
     """)
 
@@ -396,3 +408,123 @@ def checkout():
     conn.close()
 
     return render_template("checkout.html.jinja", cartContents = results, sum = total, customer = consumer)
+
+
+#Update Information
+@app.route("/account/update", methods=["POST"])
+@login.login_required
+def update_account():
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+    
+    new_email = request.form["upd_email"]
+
+    new_address = request.form["upd_address"]
+
+    if len(new_email) != 0:
+        try:
+            cursor.execute(f"""
+                UPDATE `Customer`
+                SET `email` = '{new_email}'
+                WHERE `id` = {customer_id}
+            ;""")
+        except:
+            return redirect("/checkout")
+    
+    if len(new_address) != 0:
+        try:
+            cursor.execute(f"""
+                UPDATE `Customer`
+                SET `address` = '{new_address}'
+                WHERE `id` = {customer_id}
+            ;""")
+        except:
+            return redirect("/checkout")
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return redirect("/checkout")
+
+
+##Create Sale
+@app.route("/checkout/sale")
+@login.login_required
+def create_sale():
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+    
+    cursor.execute(f"SELECT `address` FROM `Customer` WHERE `id` = {customer_id};")
+    
+    address = cursor.fetchone()
+
+    cursor.execute(f"""
+        INSERT INTO `Sale`
+            (`customer_id`, `address`, `status`)
+        VALUES
+            ('{customer_id}', '{address["address"]}', 'Pending');
+    """)
+
+    sale_id = cursor.lastrowid
+    
+    cursor.execute(f"""
+        SELECT * FROM `Cart` WHERE `customer_id` = {customer_id};
+    ;""")
+    
+    products = cursor.fetchall()
+
+    for product in products:
+        cursor.execute(f"""
+            INSERT INTO `SaleProduct`
+                (`sale_id`, `product_id`, `quantity`)
+            VALUES
+                ({sale_id}, {product['product_id']}, {product['quantity']})
+        ;""")
+    
+    return redirect("/thankyou")
+
+
+##Empty Cart
+@app.route("/thankyou")
+@login.login_required
+def empty():
+    conn = connect_db()
+    
+    cursor = conn.cursor()
+    
+    customer_id = login.current_user.id
+
+    cursor.execute(f"DELETE FROM `Cart` WHERE `customer_id` = {customer_id};")
+    
+    return render_template("thankyou.html.jinja")
+
+
+#Add Review Function
+@app.route("/add_review/<product_id>", methods=["POST"])
+@login.login_required
+def add_review(product_id):
+    customer_id = login.current_user.id
+    
+    comment = request.form["comment"]
+    
+    rating = request.form["rating"]
+
+    conn = connect_db()
+    
+    cursor = conn.cursor()
+    
+    cursor.execute(f"""
+        INSERT INTO `Review`
+            (`customer_id`, `product_id`, `review`, `rating_stars`)
+        VALUES
+            ({customer_id}, {product_id}, '{comment}', {rating})
+    ;""")
+    
+    return redirect(f"/product/{product_id}")

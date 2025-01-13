@@ -62,6 +62,12 @@ body{
     border-radius: 12px;
 }
 
+.edit_btn:hover{
+    background-color: #0e98a7;
+    color: #F0F8FF;
+    border-radius: 12px;
+}
+
 #logInCardSize{
     width: 35rem; 
     height: 24rem;
@@ -72,9 +78,31 @@ body{
     visibility: visible;
 }
 
+#backToCart{
+    background-color: #0a95a4;
+    color: #F0F8FF;
+}
+
+#backToCart:hover{
+    background-color: #00808F;
+    color: #F0F8FF;
+}
+
+#reviewCardHead{
+    height: auto;
+}
+
+#commentField {
+    height: 100px;
+}
+
+#ratingField {
+    width: 110px;
+}
 
 
-/* Fonts */
+
+/* Fonts and Text */
 
 .kanit {
     font-family: "Kanit", serif;
@@ -86,4 +114,12 @@ body{
     font-family: "Courier", serif;
     font-weight: 400;
     font-style: normal;
+}
+
+.noUnderline {
+    text-decoration: none;
+}
+
+.noBorder {
+    border: none;
 }
