@@ -92,12 +92,29 @@ body{
     height: auto;
 }
 
-#commentField {
+#commentField{
     height: 100px;
 }
 
-#ratingField {
+#ratingField{
     width: 110px;
+}
+
+.commentHolder{
+    height: 150px;
+    padding-left: 250px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding: auto;
+    border-width: 5px;
+}
+
+.comment{
+    height: 100%;
+    padding-left: 10px;
+    padding: auto;
+    border-width: 5px;
 }
 
 
@@ -122,4 +139,9 @@ body{
 
 .noBorder {
     border: none;
+}
+
+.textShrink {
+    font-size: 20px;
+    white-space: pre-line;
 }

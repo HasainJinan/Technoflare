@@ -133,6 +133,22 @@ def product_page(product_id):
     ;""")
     
     reviews = cursor.fetchall()
+    
+    shortened_reviews = []
+
+    for review in reviews:
+        count = 0
+        temp = ""
+        for char in review["review"]:
+            if count == 300:
+                temp += "..."
+                shortened_reviews.append(temp)
+                break
+            
+            else:
+                temp += char
+                count += 1
+        shortened_reviews.append(temp)
 
     ##Close Connections
     cursor.close()
@@ -141,7 +157,7 @@ def product_page(product_id):
     if result is None:
         abort(404)
 
-    return render_template("product.html.jinja", product = result, reviews = reviews)
+    return render_template("product.html.jinja", product = result, reviews = reviews, short = shortened_reviews)
         
 
 ##Add to Cart Functionality
@@ -487,6 +503,10 @@ def create_sale():
             VALUES
                 ({sale_id}, {product['product_id']}, {product['quantity']})
         ;""")
+        
+    #Close Connections
+    cursor.close()
+    conn.close()
     
     return redirect("/thankyou")
 
@@ -502,6 +522,10 @@ def empty():
     customer_id = login.current_user.id
 
     cursor.execute(f"DELETE FROM `Cart` WHERE `customer_id` = {customer_id};")
+    
+    #Close Connections
+    cursor.close()
+    conn.close()
     
     return render_template("thankyou.html.jinja")
 
@@ -525,6 +549,13 @@ def add_review(product_id):
             (`customer_id`, `product_id`, `review`, `rating_stars`)
         VALUES
             ({customer_id}, {product_id}, '{comment}', {rating})
+        ON DUPLICATE KEY UPDATE
+            `review` = '{comment}',
+            `rating_stars` = {rating}
     ;""")
+    
+    #Close Connections
+    cursor.close()
+    conn.close()
     
     return redirect(f"/product/{product_id}")

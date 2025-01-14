@@ -56,11 +56,21 @@
                 </form>
 
                 <div>
-                    <hr class="mt-5">
-                    {%for review in reviews%}
-                        {{review}}
-                        <hr>
-                    {%endfor%}
+                    <hr class="mt-3">
+                    <div class="fs-5">
+                        {%for review in reviews%}
+                            <div class="card mb-3 commentHolder">
+                                <div class="position-absolute start-0 top-0 ms-4 textLapis textShrink">
+                                    {{review["username"]}}: 
+                                    {{review["rating_stars"]}} Star Rating
+                                    {%set time = review["timestamp"].strftime("%m-%d-%Y")%}Posted on {{time}}
+                                </div>
+                                <div class="card comment overflow-hidden textLapis">
+                                    {{short[loop.index0]}}
+                                </div>
+                            </div>
+                        {%endfor%}
+                    </div>
                 </div>
             </div>
         </div>
