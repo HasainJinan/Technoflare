@@ -16,10 +16,10 @@
                     <li class="nav-item">
                         <a class="nav-link textLapis" href="/cart">Cart</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link textLapis" href="/order-history">Orders</a>
+                    </li>
                 {%endif%}
-                <li class="nav-item">
-                    <a class="nav-link textLapis" href="/logout">Log Out</a>
-                </li>
             </ul>
             
             {%if current_user.is_authenticated%}
@@ -34,6 +34,9 @@
                         <li><a class="dropdown-item" href="/logout">Log Out</a></li>
                     </ul>
                 </div>
+                <form class="d-flex" action="/logout">
+                    <button class="btn signUpBtn ms-2 colorBittersweet" type="submit">Logout</button>
+                </form>
             {%else%}
                 <form class="d-flex" action="/login">
                     <button class="btn signUpBtn" type="submit">Log In</button>

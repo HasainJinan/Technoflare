@@ -32,12 +32,26 @@ body{
     background-color: #00808F;
 }
 
-.banButton{
-    background-color: #00808F;
+.uiButton{
+    background-color: aliceblue;
+    color:teal;
+}
+
+.uiButton:hover{
+    background-color: rgb(217, 223, 229);
+    color: rgb(2, 111, 111);
 }
 
 .textAlice{
-    color: #F0F8FF
+    color: #F0F8FF;
+}
+
+.textTeal{
+    color:#00808F;
+}
+
+.textMint{
+    color: #02C39A;
 }
 
 .logInBtn{
@@ -68,9 +82,9 @@ body{
     border-radius: 12px;
 }
 
-#logInCardSize{
+.logInCardSize{
     width: 35rem; 
-    height: 24rem;
+    height: 100%;
 }
 
 #logInTextSize{
@@ -115,6 +129,28 @@ body{
     padding-left: 10px;
     padding: auto;
     border-width: 5px;
+}
+
+.xButton{
+    border: none;
+    background-color: white;
+    color: rgb(131, 131, 131);
+}
+
+.colorBittersweet{
+    background-color: #FF6666;
+}
+
+.homepagecontainer{
+    height: 1300px;
+}
+
+.gap{
+    height: 700px;
+}
+
+.fixedWidth{
+    width: 50px;
 }
 
 

@@ -118,6 +118,12 @@ def product_page(product_id):
 
     cursor = conn.cursor()
 
+    if login.current_user.is_authenticated:
+        customer_id = login.current_user.id
+
+    else:
+        customer_id = None
+
     cursor.execute(f"SELECT * FROM `Product` WHERE `id` = {product_id};")
 
     result = cursor.fetchone()
@@ -127,7 +133,8 @@ def product_page(product_id):
             `review`,
             `rating_stars`,
             `Review`.`timestamp`,
-            `username`
+            `username`,
+            `Customer`.`id`
         FROM `Review`
         JOIN `Customer` ON `customer_id` = `Customer`.`id`
     ;""")
@@ -157,7 +164,7 @@ def product_page(product_id):
     if result is None:
         abort(404)
 
-    return render_template("product.html.jinja", product = result, reviews = reviews, short = shortened_reviews)
+    return render_template("product.html.jinja", product = result, reviews = reviews, short = shortened_reviews, customer = customer_id)
         
 
 ##Add to Cart Functionality
@@ -559,3 +566,114 @@ def add_review(product_id):
     conn.close()
     
     return redirect(f"/product/{product_id}")
+
+
+##Remove Review Function
+@app.route("/remove_review/<user_id>/<product_id>", methods = ["POST"])
+@login.login_required
+def delete(user_id, product_id):
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        DELETE FROM `Review`
+        WHERE `customer_id` = {user_id}
+    ;""")
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return redirect(f"/product/{product_id}")
+
+
+##Add Item
+@app.route("/add_item", methods = ["POST"])
+@login.login_required
+def add():
+    name = request.form["itemName"]
+
+    description = request.form["itemDescription"]
+
+    image = request.form["itemImage"]
+
+    price = request.form["itemPrice"]
+
+    stock = request.form["itemStock"]
+
+    itemtype = request.form["itemType"]
+
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        INSERT INTO `Product`
+            (`name`, `description`, `image`, `price`, `stock`, `type`)
+        VALUES
+            ('{name}', '{description}', '{image}', {price}, {stock}, '{itemtype}')
+    ;""")
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return redirect("/browse")
+
+
+##Order History Page
+@app.route("/order-history")
+@login.login_required
+def orders():
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    customer_id = login.current_user.id
+
+    cursor.execute(f"SELECT * FROM `Sale` WHERE `customer_id` = {customer_id};")
+
+    results = cursor.fetchall()
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+    return render_template("sales.html.jinja", sales = results)
+
+
+##Individual Sale Page
+@app.route("/order-history/<sale_id>")
+@login.login_required
+def sale_page(sale_id):
+    conn = connect_db()
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        SELECT
+            `sale_id`,
+            `name`,
+            `price`,
+            `quantity`,
+            `product_id`
+        FROM `SaleProduct`
+        JOIN `Product` ON `product_id` = `Product`.`id`
+        WHERE `sale_id` = {sale_id};""")
+
+    results = cursor.fetchall()
+
+    total = 0
+
+    for item in results:
+        total += item["quantity"] * item["price"]
+
+    cursor.execute(f"SELECT `address` FROM `Sale` WHERE `id` = {sale_id};")
+
+    address = cursor.fetchone()
+
+    #Close Connections
+    cursor.close()
+    conn.close()
+
+    return render_template("order.html.jinja", items = results, address = address, total = total)

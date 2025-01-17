@@ -1,12 +1,34 @@
-<button class="btn banButton textAlice textLapis position-absolute bottom-0 start-0 ms-4 mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">GUI</button>
+<button class="btn uiButton position-absolute bottom-0 start-0 ms-4 mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">GUI</button>
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Ui</h5>
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Add Items</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <p>(Future use)</p>
+    <form action="/add_item" method = "POST">
+      <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="Name" name="itemName" required>
+
+        <label for="Description" class="form-label">Description</label>
+        <input type="text" class="form-control" id="Description" name="itemDescription" required>
+
+        <label for="Image" class="form-label">Image</label>
+        <input type="text" class="form-control" id="Image" name="itemImage" required>
+
+        <label for="Price" class="form-label">Price</label>
+        <input type="number" step="0.01" class="form-control" id="Price" name="itemPrice" required>
+
+        <label for="Stock" class="form-label">Stock</label>
+        <input type="number" class="form-control" id="Stock" name="itemStock" required>
+
+        <label for="Type" class="form-label">Type</label>
+        <input type="text" class="form-control" id="Type" name="itemType" required>
+
+        <button type="submit">Enter</button>
+      </div>
+    </form>
     
   </div>
 </div>
