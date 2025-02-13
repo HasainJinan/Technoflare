@@ -61,7 +61,7 @@ def load_user(user_id):
     
     ##Close Connections
     cursor.close()
-    conn.close
+    conn.close()
 
     if result is not None:
         return User(result["id"], result["username"], result["email"], result["first_name"], result["last_name"])
@@ -70,7 +70,7 @@ def load_user(user_id):
 ##Connecting To Database Function
 def connect_db():
     conn = pymysql.connect(
-        host = "10.100.34.80",
+        host = "10.100.34.82",
         database = "hjinan_technoflare",
         user = "hjinan",
         password = conf.password,
